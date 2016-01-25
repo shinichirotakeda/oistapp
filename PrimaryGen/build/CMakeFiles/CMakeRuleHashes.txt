@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-deedf025c32716e7429791ef770fcf05 ruby/oISTappRUBY_wrap.cxx
