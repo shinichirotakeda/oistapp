@@ -1,0 +1,2 @@
+/Users/takeda/soft/oistapp/PrimaryGen/build/ruby/CMakeFiles/oISTapp.dir
+/Users/takeda/soft/oistapp/PrimaryGen/build/CMakeFiles/OISTapp.dir
