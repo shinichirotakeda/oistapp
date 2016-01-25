@@ -20,7 +20,7 @@ void mk_flatmicroPhantom(){
   }
 
 
-  TFile *fout = new TFile("microFlatPhantom.root","recreate");
+  TFile *fout = new TFile("microFlatPhantom_phi1cm.root","recreate");
   fout->cd();
   hout->Write();
   fout->Close();
