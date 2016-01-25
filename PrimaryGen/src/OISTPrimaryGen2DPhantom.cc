@@ -133,8 +133,8 @@ G4ThreeVector OISTPrimaryGen2DPhantom::samplePosition()
     
   }
   
-  m_SourcePosition.setX(posx);
-  m_SourcePosition.setY(posy);
+  m_SourcePosition.setX(posx*cm);
+  m_SourcePosition.setY(posy*cm);
   return m_SourcePosition;
 }
 

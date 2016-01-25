@@ -1,4 +1,4 @@
-#include "PrimaryGen2DFlatPhantom.hh"
+#include "OISTPrimaryGen2DPhantom.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "Randomize.hh"
@@ -7,19 +7,19 @@
 
 using namespace anl;
 using namespace anlgeant4;
-using namespace tkdapp;
+using namespace oistapp;
 
-PrimaryGen2DFlatPhantom::PrimaryGen2DFlatPhantom()
+OISTPrimaryGen2DPhantom::OISTPrimaryGen2DPhantom()
   : m_SourcePosition(0.0, 0.0, 0.0),
     m_CenterDirection(0.0, 0.0, -1.0),
     m_Theta0(0.0), m_Theta1(pi), m_CosTheta0(1.0), m_CosTheta1(-1.0),
     m_CoveringFactor(1.0), m_Luminosity(1.0*(erg/s))
 {
-  add_alias("PrimaryGen2DFlatPhantom");
+  add_alias("OISTPrimaryGen2DPhantom");
 }
 
 
-ANLStatus PrimaryGen2DFlatPhantom::mod_startup()
+ANLStatus OISTPrimaryGen2DPhantom::mod_startup()
 {
   BasicPrimaryGen::mod_startup();
 
@@ -43,7 +43,7 @@ ANLStatus PrimaryGen2DFlatPhantom::mod_startup()
 }
 
 
-ANLStatus PrimaryGen2DFlatPhantom::mod_init()
+ANLStatus OISTPrimaryGen2DPhantom::mod_init()
 {
   using std::cos;
   
@@ -85,7 +85,7 @@ ANLStatus PrimaryGen2DFlatPhantom::mod_init()
 }
 
 
-ANLStatus PrimaryGen2DFlatPhantom::mod_ana()
+ANLStatus OISTPrimaryGen2DPhantom::mod_ana()
 {
   const G4ThreeVector position = samplePosition();
   const G4ThreeVector direction = sampleDirection();
@@ -101,7 +101,7 @@ ANLStatus PrimaryGen2DFlatPhantom::mod_ana()
 }
 
 
-G4ThreeVector PrimaryGen2DFlatPhantom::sampleDirection()
+G4ThreeVector OISTPrimaryGen2DPhantom::sampleDirection()
 {
   G4double phi = twopi * G4UniformRand();
   G4double cosTheta = m_CosTheta0+(m_CosTheta1-m_CosTheta0)*G4UniformRand();
@@ -112,7 +112,7 @@ G4ThreeVector PrimaryGen2DFlatPhantom::sampleDirection()
 }
 
 
-G4ThreeVector PrimaryGen2DFlatPhantom::samplePosition()
+G4ThreeVector OISTPrimaryGen2DPhantom::samplePosition()
 {
 
   G4double posx, posy;
@@ -139,7 +139,7 @@ G4ThreeVector PrimaryGen2DFlatPhantom::samplePosition()
 }
 
 
-ANLStatus PrimaryGen2DFlatPhantom::mod_endrun()
+ANLStatus OISTPrimaryGen2DPhantom::mod_endrun()
 {
   G4double realTime = 0.;
   G4double pflux = 0.;

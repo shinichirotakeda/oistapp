@@ -14,8 +14,7 @@ namespace oistapp {
   class OISTPrimaryGen2DPhantom : public anlgeant4::BasicPrimaryGen
   {
   public:
-    PrimaryGen2DPhantom() {}
-    ~PrimaryGen2DPhantom() {}
+    OISTPrimaryGen2DPhantom();
   };
   
 }

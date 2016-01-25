@@ -3677,6 +3677,43 @@ namespace swig
 
 static swig_class SwigClassOISTPrimaryGen2DPhantom;
 
+#ifdef HAVE_RB_DEFINE_ALLOC_FUNC
+SWIGINTERN VALUE
+_wrap_OISTPrimaryGen2DPhantom_allocate(VALUE self) {
+#else
+  SWIGINTERN VALUE
+  _wrap_OISTPrimaryGen2DPhantom_allocate(int argc, VALUE *argv, VALUE self) {
+#endif
+    
+    
+    VALUE vresult = SWIG_NewClassInstance(self, SWIGTYPE_p_oistapp__OISTPrimaryGen2DPhantom);
+#ifndef HAVE_RB_DEFINE_ALLOC_FUNC
+    rb_obj_call_init(vresult, argc, argv);
+#endif
+    return vresult;
+  }
+  
+
+SWIGINTERN VALUE
+_wrap_new_OISTPrimaryGen2DPhantom(int argc, VALUE *argv, VALUE self) {
+  oistapp::OISTPrimaryGen2DPhantom *result = 0 ;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (oistapp::OISTPrimaryGen2DPhantom *)new oistapp::OISTPrimaryGen2DPhantom();
+  DATA_PTR(self) = result;
+  return self;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN void
+free_oistapp_OISTPrimaryGen2DPhantom(oistapp::OISTPrimaryGen2DPhantom *arg1) {
+    delete arg1;
+}
+
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
@@ -4156,8 +4193,10 @@ SWIGEXPORT void Init_oISTapp(void) {
   
   SwigClassOISTPrimaryGen2DPhantom.klass = rb_define_class_under(mOISTapp, "OISTPrimaryGen2DPhantom", ((swig_class *) SWIGTYPE_p_anlgeant4__BasicPrimaryGen->clientdata)->klass);
   SWIG_TypeClientData(SWIGTYPE_p_oistapp__OISTPrimaryGen2DPhantom, (void *) &SwigClassOISTPrimaryGen2DPhantom);
-  rb_undef_alloc_func(SwigClassOISTPrimaryGen2DPhantom.klass);
+  rb_define_alloc_func(SwigClassOISTPrimaryGen2DPhantom.klass, _wrap_OISTPrimaryGen2DPhantom_allocate);
+  rb_define_method(SwigClassOISTPrimaryGen2DPhantom.klass, "initialize", VALUEFUNC(_wrap_new_OISTPrimaryGen2DPhantom), -1);
   SwigClassOISTPrimaryGen2DPhantom.mark = 0;
+  SwigClassOISTPrimaryGen2DPhantom.destroy = (void (*)(void *)) free_oistapp_OISTPrimaryGen2DPhantom;
   SwigClassOISTPrimaryGen2DPhantom.trackObjects = 0;
 }
 
