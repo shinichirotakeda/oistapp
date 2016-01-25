@@ -1,0 +1,9 @@
+*~
+.DS_Store
+PrimaryGen/build/
+PrimaryGen/examples/*.root
+PrimaryGen/examples/*_seed_I.txt
+PrimaryGen/examples/*_seed_F.txt
+*_summary.txt
+*_volume.txt
+*.log
