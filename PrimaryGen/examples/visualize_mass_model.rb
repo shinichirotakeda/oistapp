@@ -34,7 +34,7 @@ def run_simulation(num, random)
   sim.set_physics(hadron_hp: false, cut_value: 0.001)
 
   sim.set_geometry :CdTeStripCameraMainGeometry, {
-    "Collimator Name" => "Type1",
+    "Collimator Name" => "Type2",
   }  
 
 
@@ -47,7 +47,7 @@ def run_simulation(num, random)
     "Center direction" => vec(dirx, diry, dirz),
     "theta min" => 0.0,
     "theta max" => thetamax,
-    "Input file name" => "database/microFlatPhantom.root",
+    "Input file name" => "database/microPhantom.root",
     "Histgram name" => "phantom",           
   }
 

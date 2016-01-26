@@ -1,6 +1,6 @@
 *~
 .DS_Store
-PrimaryGen/build/
+build/
 PrimaryGen/examples/*.root
 PrimaryGen/examples/*_seed_I.txt
 PrimaryGen/examples/*_seed_F.txt
