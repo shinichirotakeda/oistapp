@@ -57,14 +57,15 @@ message("--- CS_INC_DIR ${CS_INC_DIR}")
 message("--- ROOT_INC_DIR ${ROOT_INC_DIR}")
 
 
-
 add_definitions(-DANL_USE_HEPVECTOR)
 include_directories(include
   ${ANLG4_INC_DIR}
   ${ANLNEXT_INC_DIR}
   ${G4_INC_DIR}
   ${ROOT_INC_DIR}
+  ${CS_INC_DIR}
   PrimaryGen/include
+  Module/include
   )
 
 
@@ -82,11 +83,12 @@ link_directories(
   ${ANLNEXT_LIB_DIR}
   ${G4_LIB_DIR}
   ${ROOT_LIB_DIR}
+  ${CS_LIB_DIR}
   )
 
 add_library(${TARGET_LIBRARY} SHARED
   PrimaryGen/src/OISTPrimaryGen2DPhantom.cc
-	
+  Module/src/OISTDetectorImage.cc	
   )
 
 message("--- ANLG4_LIB ${ANLG4_LIB}")
@@ -97,7 +99,7 @@ message("--- ROOT_LIB ${ROOT_LIB}")
 message("--- BOOST_LIB ${BOOST_LIB}")
 
 target_link_libraries(${TARGET_LIBRARY}
-  ${ANLG4_LIB} ${ANLNEXT_LIB} ${G4_LIB} ${ROOT_LIB})
+  ${ANLG4_LIB} ${ANLNEXT_LIB} ${G4_LIB} ${ROOT_LIB} ${CS_LIB} ${BOOST_LIB})
 
 install(TARGETS ${TARGET_LIBRARY}
   LIBRARY
