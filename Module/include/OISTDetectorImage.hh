@@ -3,7 +3,7 @@
 
 #include "VCSModule.hh"
 
-class TH1;
+class TH2;
 
 
 namespace anlgeant4 { class InitialInformation; }
@@ -25,12 +25,10 @@ namespace oistapp {
   private:
     comptonsoft::CSHitCollection* m_HitCollection;
     const anlgeant4::InitialInformation* m_InitialInfo;
-    std::string m_EnergyBinType;
-    int m_NumBinEnergy;
-    double m_RangeEnergy1;
-    double m_RangeEnergy2;
-    std::map<std::string, TH1*> m_Responses;
-    std::vector<std::string> m_Selections;
+    std::map<int, TH2*> m_Image;
+    std::map<int, TH2*> m_ImageEcut;
+    double energy_ld;
+    double energy_ud;
   };
   
 } /* namespace oistapp */
