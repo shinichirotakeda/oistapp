@@ -1,0 +1,67 @@
+#ifndef OISTAPP_OISTMakeDetectorHits_H
+#define OISTAPP_OISTMakeDetectorHits_H 1
+
+#include "CSTypes.hh"
+#include "DetectorHit.hh"
+#include "SelectHits.hh"
+#include "VRealDetectorUnit.hh"
+#include "RealDetectorUnit2DStrip.hh"
+#include "TH2.h"
+
+namespace oistapp {
+
+class OISTMakeDetectorHits : public comptonsoft::SelectHits
+{
+  DEFINE_ANL_MODULE(OISTMakeDetectorHits, 1.0);
+public:
+  OISTMakeDetectorHits() = default;
+  ~OISTMakeDetectorHits() = default;
+
+  anl::ANLStatus mod_his();
+  
+
+private:
+  void doProcessing();
+
+  int NumberOfCathodeSideHits() const { return cathodeSideHits_.size(); }
+  comptonsoft::DetectorHit_sptr getCathodeSideHit(int i) { return cathodeSideHits_[i]; }
+  int NumberOfAnodeSideHits() const { return anodeSideHits_.size(); }
+  comptonsoft::DetectorHit_sptr getAnodeSideHit(int i) { return anodeSideHits_[i]; }
+  
+  
+  void reconstructDoubleSides(comptonsoft::RealDetectorUnit2DStrip* dsd,
+			      const comptonsoft::DetectorHitVector& hitsCathode,
+			      const comptonsoft::DetectorHitVector& hitsAnode,
+			      comptonsoft::DetectorHitVector& hitReconstructed);
+  
+  comptonsoft::DetectorHit_sptr mergeDoubleSides(comptonsoft::RealDetectorUnit2DStrip* dsd,
+						 const comptonsoft::DetectorHit_sptr hitCathode,
+						 const comptonsoft::DetectorHit_sptr hitAnode) const;
+  
+  //  comptonsoft::vector3_t Position(int pixelX, int pixelY) const;
+  //  comptonsoft::vector3_t LocalPosition(int pixelX, int pixelY) const;
+  /*
+  comptonsoft::vector3_t centerPosition_;
+  comptonsoft::vector3_t directionX_;
+  comptonsoft::vector3_t directionY_;
+  double sizeX_;
+  double sizeY_;
+  double sizeZ_;
+  double offsetX_;
+  double offsetY_;
+  double pixelPitchX_;
+  double pixelPitchY_;
+  */
+
+  comptonsoft::DetectorHitVector reconstructedHits_;
+  comptonsoft::DetectorHitVector cathodeSideHits_;
+  comptonsoft::DetectorHitVector anodeSideHits_;
+  
+  std::map<int, TH2*> m_Multiplicity;
+};
+
+
+  
+} /* namespace comptonsoft */
+
+#endif /* OISTAPP_OISTMakeDetectorHits_H */

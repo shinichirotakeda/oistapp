@@ -88,8 +88,11 @@ link_directories(
 
 add_library(${TARGET_LIBRARY} SHARED
   PrimaryGen/src/OISTPrimaryGen2DPhantom.cc
-  Module/src/OISTDetectorImage.cc	
-  )
+  Module/src/OISTDetectorImage.cc
+  Module/src/OISTReadDataFile_NT.cc	
+  Module/src/OIST1DHistogram.cc
+  Module/src/OISTMakeDetectorHits
+)
 
 message("--- ANLG4_LIB ${ANLG4_LIB}")
 message("--- ANLNEXT_LIB ${ANLNEXT_LIB}")
