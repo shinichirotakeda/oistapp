@@ -7,6 +7,25 @@
 using namespace anl;
 using namespace comptonsoft;
 
+
+namespace {
+
+typedef std::list<comptonsoft::DetectorHit_sptr> HitList;
+
+bool is_group_adjacent(const HitList& group0, const HitList& group1) {
+  for (const auto& hit0: group0) {
+    for (const auto& hit1: group1) {
+      if (hit0->isAdjacent(*hit1, true)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+} /* anonymous namespace */
+
+
 namespace oistapp
 {
   
@@ -27,22 +46,18 @@ namespace oistapp
       int detid = detector->getID();      
       detector->selectHits();
       const int numhit = detector->NumberOfDetectorHits();
-      int anodehit =0;
-      int cathodehit =0;      
       for(int i=0;i<numhit;i++){
 	DetectorHit_sptr hit = detector->getDetectorHit(i);
 	if(hit->isFlags(flag::AnodeSide)){
 	  anodeSideHits_.push_back(hit->clone());
-	  anodehit++;
 	}else if(hit->isFlags(flag::CathodeSide)){
 	  cathodeSideHits_.push_back(hit->clone());
-	  cathodehit++;
 	}else{
 	  std::cout << "undefined ..." << std::endl; 
 	}
 	
       }
-      m_Multiplicity[detid]->Fill(anodehit,cathodehit);
+      m_Multiplicity_org[detid]->Fill(anodeSideHits_.size(),cathodeSideHits_.size());
 
       auto compairStrip = [](const DetectorHit_sptr& h1, const DetectorHit_sptr& h2)-> bool {
 	return ((h1->isXStrip() && (h1->Pixel().X() < h2->Pixel().X()))
@@ -52,7 +67,11 @@ namespace oistapp
       std::sort(anodeSideHits_.begin(), anodeSideHits_.end(), compairStrip);
       std::sort(cathodeSideHits_.begin(), cathodeSideHits_.end(), compairStrip);
 
-
+      if (dsd->isClusteringOn()) {
+	cluster(anodeSideHits_);
+	cluster(cathodeSideHits_);
+      }
+      m_Multiplicity_clustered[detid]->Fill(anodeSideHits_.size(),cathodeSideHits_.size());
       //      bool energyconsistency = dsd->isEnergyConsistencyRequired();
       //      prioritySide_ = dsd->PrioritySide();
       /*
@@ -154,16 +173,74 @@ namespace oistapp
       int detid = detunit->getID();
       int pixelx = detunit->getNumPixelX();
       int pixely = detunit->getNumPixelY();
-      TH2F *hist = 0;
-      std::string name = (boost::format("multiplicity_%04d") % detid).str();
-      hist = new TH2F(name.c_str(), "multiplicity", pixelx, -0.5, pixelx-0.5, pixely, -0.5, pixely-0.5);
-      hist->GetXaxis()->SetTitle("Multiplicity(Anode)");
-      hist->GetYaxis()->SetTitle("Multiplicity(Cathode)");
-      m_Multiplicity[detid] = hist;
+
+      TH2F *hist_org = 0;
+      std::string name = (boost::format("multiplicity_org_%04d") % detid).str();
+      hist_org = new TH2F(name.c_str(), "multiplicity_org", pixelx, -0.5, pixelx-0.5, pixely, -0.5, pixely-0.5);
+      hist_org->GetXaxis()->SetTitle("Multiplicity(Anode)");
+      hist_org->GetYaxis()->SetTitle("Multiplicity(Cathode)");
+      m_Multiplicity_org[detid] = hist_org;
+
+      TH2F *hist_clustered = 0;
+      name = (boost::format("multiplicity_clustered_%04d") % detid).str();
+      hist_clustered = new TH2F(name.c_str(), "multiplicity_clustered", pixelx, -0.5, pixelx-0.5, pixely, -0.5, pixely-0.5);
+      hist_clustered->GetXaxis()->SetTitle("Multiplicity(Anode)");
+      hist_clustered->GetYaxis()->SetTitle("Multiplicity(Cathode)");
+      m_Multiplicity_clustered[detid] = hist_clustered;
       
     }
     return AS_OK;
   }
+  
+
+  void OISTMakeDetectorHits::cluster(comptonsoft::DetectorHitVector& hits) const
+  {
+    std::vector<std::list<DetectorHit_sptr>> groups;
+    std::transform(hits.begin(), hits.end(), std::back_inserter(groups),
+		   [](const DetectorHit_sptr& hit){
+		     return std::list<DetectorHit_sptr>(1, hit);
+		   });
+    
+    auto compair = [](const DetectorHit_sptr& hit1, const DetectorHit_sptr& hit2)-> bool {
+      return hit1->EPI() > hit2->EPI();
+    };
+    
+    bool merged = true;
+    while (merged) {
+      merged = false;
+      auto groupIter = std::begin(groups);
+      while (groupIter != std::end(groups)) {
+	auto groupIter1 = groupIter + 1;
+	while (groupIter1 != std::end(groups)) {
+	  if (is_group_adjacent(*groupIter, *groupIter1)) {
+	    groupIter->merge(*groupIter1, compair);
+	    groupIter1 = groups.erase(groupIter1);
+	    merged = true;
+	  }
+	  else {
+	    ++groupIter1;
+	  }
+	}
+	++groupIter;
+      }
+    }
+    
+    for (auto& group: groups) {
+      group.sort(compair);
+    }
+
+    DetectorHitVector clusteredHits;
+    for (auto& group: groups) {
+      clusteredHits.push_back(DetectorHit_sptr(group.front()));
+      auto hitIter=std::begin(group);
+      ++hitIter;
+      for (; hitIter!=std::end(group); ++hitIter) {
+	clusteredHits.back()->mergeAdjacentSignal(**hitIter, DetectorHit::MergedPosition::KeepLeft);
+      }
+    }
+    hits = std::move(clusteredHits);
+  }
+  
   
   
 } /* namespace oistapp */

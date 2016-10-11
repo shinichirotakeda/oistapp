@@ -38,6 +38,9 @@ private:
 						 const comptonsoft::DetectorHit_sptr hitCathode,
 						 const comptonsoft::DetectorHit_sptr hitAnode) const;
   
+  void cluster(comptonsoft::DetectorHitVector& hits) const;
+
+
   //  comptonsoft::vector3_t Position(int pixelX, int pixelY) const;
   //  comptonsoft::vector3_t LocalPosition(int pixelX, int pixelY) const;
   /*
@@ -57,7 +60,8 @@ private:
   comptonsoft::DetectorHitVector cathodeSideHits_;
   comptonsoft::DetectorHitVector anodeSideHits_;
   
-  std::map<int, TH2*> m_Multiplicity;
+  std::map<int, TH2*> m_Multiplicity_org;
+  std::map<int, TH2*> m_Multiplicity_clustered;
 };
 
 
