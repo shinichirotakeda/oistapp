@@ -89,9 +89,21 @@ link_directories(
 add_library(${TARGET_LIBRARY} SHARED
   PrimaryGen/src/OISTPrimaryGen2DPhantom.cc
   Module/src/OISTDetectorImage.cc
-  Module/src/OISTReadDataFile_NT.cc	
+  Module/src/OISTReadDataFile_NT.cc
+  Module/src/OISTReadDataFile_Muon.cc
+  Module/src/OISTReadDataFile_Muon2.cc		
+  Module/src/OISTReadDataFile_COMP.cc
   Module/src/OIST1DHistogram.cc
   Module/src/OISTMakeDetectorHits
+  Module/src/OISTMakeDetectorHits_Muon
+  Module/src/OISTHitTreeIO.cc
+  Module/src/OISTHitTreeIOWithInitialInfo.cc
+  Module/src/OISTMakeDetectorHits_COMP.cc
+  Module/src/OISTWriteHitTree.cc
+  Module/src/OISTComptonEventTreeIO.cc
+  Module/src/OISTComptonEventTreeIOWithInitialInfo.cc
+  Module/src/OISTReadHitTree.cc
+  Module/src/OISTWriteComptonEventTree.cc
 )
 
 message("--- ANLG4_LIB ${ANLG4_LIB}")
