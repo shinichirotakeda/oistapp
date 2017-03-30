@@ -2,6 +2,7 @@
 %{
 
 #include "OISTPrimaryGen2DPhantom.hh"
+#include "OISTPrimaryGenUltraMicroPhantom.hh"
 #include "OISTDetectorImage.hh"
 #include "OISTReadDataFile_NT.hh"
 #include "OISTReadDataFile_Muon.hh"
@@ -36,6 +37,12 @@ namespace oistapp {
     OISTPrimaryGen2DPhantom();
   };
 
+  class OISTPrimaryGenUltraMicroPhantom : public anlgeant4::BasicPrimaryGen
+  {
+  public:
+    OISTPrimaryGenUltraMicroPhantom();
+  };
+  
   class OISTDetectorImage : public comptonsoft::VCSModule
   {
 

@@ -1,5 +1,6 @@
 namespace oistapp {
   class OISTPrimaryGen2DPhantom;
+  class OISTPrimaryGenUltraMicroPhantom;
   class OISTDetectorImage;
   class OISTReadDataFile_NT;
   class OISTReadDataFile_Muon;
