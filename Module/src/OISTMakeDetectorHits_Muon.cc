@@ -35,6 +35,9 @@ namespace oistapp
     register_parameter(&m_AnalysisMode, "analysis_mode");
     register_parameter(&m_Esearch_Ld, "energy_window_ld", keV, "keV");
     register_parameter(&m_Esearch_Ud, "energy_window_ud", keV, "keV");
+
+    register_parameter(&m_Timesearch_Ld, "timing_window_ld");
+    register_parameter(&m_Timesearch_Ud, "timing_window_ud");
     
     SelectHits::mod_startup();    
   }
@@ -171,7 +174,7 @@ namespace oistapp
       }
       if(anodecandidate_org == 1 && cathodecandidate_org==1){
 	tmp_detectorimage[detid]->Fill(anodestrip_org,cathodestrip_org);
-	if(1088<=exptime && exptime < 1098) tmp_detectorimage_timecut[detid]->Fill(anodestrip_org,cathodestrip_org);
+	if(m_Timesearch_Ld<=exptime && exptime < m_Timesearch_Ud) tmp_detectorimage_timecut[detid]->Fill(anodestrip_org,cathodestrip_org);
       }
       
       auto compairStrip = [](const DetectorHit_sptr& h1, const DetectorHit_sptr& h2)-> bool {
@@ -210,11 +213,11 @@ namespace oistapp
 
       if(!(anodecandidate==0 && cathodecandidate==0)){
 	tmp_multiplicity_clustered[detid]->Fill(anodecandidate,cathodecandidate);
-	if(1088<=exptime && exptime < 1098)tmp_multiplicity_clustered_timecut[detid]->Fill(anodecandidate,cathodecandidate);
+	if(m_Timesearch_Ld<=exptime && exptime < m_Timesearch_Ud)tmp_multiplicity_clustered_timecut[detid]->Fill(anodecandidate,cathodecandidate);
       }
       if(anodecandidate == 1 && cathodecandidate==1){
 	tmp_detectorimage_clustered[detid]->Fill(anodestrip,cathodestrip);
-	if(1088<=exptime && exptime < 1098) tmp_detectorimage_clustered_timecut[detid]->Fill(anodestrip,cathodestrip);
+	if(m_Timesearch_Ld<=exptime && exptime < m_Timesearch_Ud) tmp_detectorimage_clustered_timecut[detid]->Fill(anodestrip,cathodestrip);
       }
 
       //      bool energyconsistency = dsd->isEnergyConsistencyRequired();
@@ -412,7 +415,50 @@ namespace oistapp
 	  
 	}
 	
+	////////////////////////////////////////   	
+      }else if(m_AnalysisMode==3){
+	/*
+	auto compairStrip = [](const DetectorHit_sptr& hit1, const DetectorHit_sptr& hit2)-> bool {
+	  return hit1->EPI() < hit2->EPI();
+	};
 	
+	std::sort(anodeSideHits_.begin(), anodeSideHits_.end(), compairStrip);
+	std::sort(cathodeSideHits_.begin(), cathodeSideHits_.end(), compairStrip);
+
+	
+	std::sort(org_anodeSideHits_.begin(), org_anodeSideHits_.end(), compairStrip);
+	std::sort(org_cathodeSideHits_.begin(), org_cathodeSideHits_.end(), compairStrip);
+	*/
+
+	std::cout<<"org anode hit:"<<org_anodeSideHits_.size()<< " ";
+	for(int i=0;i<org_anodeSideHits_.size();i++){
+	  double energy  = org_anodeSideHits_[i]->EPI();
+	  std::cout << energy << ", ";
+	}
+	std::cout << std::endl;
+
+	std::cout<<"org cathode hit:"<<org_cathodeSideHits_.size()<< " ";
+	for(int i=0;i<org_cathodeSideHits_.size();i++){
+	  double energy  = org_cathodeSideHits_[i]->EPI();
+	  std::cout << energy << ", ";
+	}	
+	std::cout << std::endl;
+
+	std::cout<<"clr anode hit:"<<anodeSideHits_.size()<< " ";
+	for(int i=0;i<anodeSideHits_.size();i++){
+	  double energy  = anodeSideHits_[i]->EPI();
+	  std::cout << energy << ", ";
+	}
+	std::cout << std::endl;
+
+	std::cout<<"clr cathode hit:"<<cathodeSideHits_.size()<< " ";
+	for(int i=0;i<cathodeSideHits_.size();i++){
+	  double energy  = cathodeSideHits_[i]->EPI();
+	  std::cout << energy << ", ";
+	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
 	
       }else{
 	reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);	

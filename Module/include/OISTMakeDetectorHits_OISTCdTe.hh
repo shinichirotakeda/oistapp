@@ -1,5 +1,5 @@
-#ifndef OISTAPP_OISTMakeDetectorHits_Muon_H
-#define OISTAPP_OISTMakeDetectorHits_Muon_H 1
+#ifndef OISTAPP_OISTMakeDetectorHits_OISTCdTe_H
+#define OISTAPP_OISTMakeDetectorHits_OISTCdTe_H 1
 
 #include "CSTypes.hh"
 #include "DetectorHit.hh"
@@ -8,21 +8,16 @@
 #include "RealDetectorUnit2DStrip.hh"
 #include "TH2.h"
 
-#include "OISTReadDataFile_Muon.hh"
-#include "AstroUnits.hh"
-
 namespace oistapp {
 
-  
-class OISTMakeDetectorHits_Muon : public comptonsoft::SelectHits
+class OISTMakeDetectorHits_OISTCdTe : public comptonsoft::SelectHits
 {
-  DEFINE_ANL_MODULE(OISTMakeDetectorHits_Muon, 1.0);
+  DEFINE_ANL_MODULE(OISTMakeDetectorHits_OISTCdTe, 1.0);
 public:
-  OISTMakeDetectorHits_Muon() = default;
-  ~OISTMakeDetectorHits_Muon() = default;
+  OISTMakeDetectorHits_OISTCdTe() = default;
+  ~OISTMakeDetectorHits_OISTCdTe() = default;
 
   anl::ANLStatus mod_his();
-  anl::ANLStatus mod_startup();
   
 
 private:
@@ -61,32 +56,31 @@ private:
   double pixelPitchY_;
   */
 
-  int m_AnalysisMode;
-  double m_Esearch_Ld = 17.5 * keV;
-  double m_Esearch_Ud = 20.0 * keV;
-  double m_Timesearch_Ld = 638.0;
-  double m_Timesearch_Ud = 648.0;
-  
-  const oistapp::OISTReadDataFile_Muon* readDatafile_;
-  
   comptonsoft::DetectorHitVector reconstructedHits_;
   comptonsoft::DetectorHitVector cathodeSideHits_;
   comptonsoft::DetectorHitVector anodeSideHits_;
   
   std::map<int, TH2*> m_Multiplicity_org;
   std::map<int, TH2*> m_Multiplicity_clustered;
-  std::map<int, TH2*> tmp_detectorimage;
-  std::map<int, TH2*> tmp_detectorimage_clustered;
-  std::map<int, TH2*> tmp_multiplicity_clustered;
-  
-  std::map<int, TH2*> tmp_detectorimage_timecut;
-  std::map<int, TH2*> tmp_detectorimage_clustered_timecut;
-  std::map<int, TH2*> tmp_multiplicity_clustered_timecut;
 
+  TH2D *splithit_p_ch24;
+  TH2D *splithit_p_ch29;
+  TH2D *splithit_p_ch32;
+  TH2D *splithit_n_ch03;
+  TH2D *splithit_n_ch14;
+  TH2D *splithit_n_ch17;
+
+  TH1D *energy_p_ch24;
+  TH1D *energy_p_ch29;
+  TH1D *energy_p_ch32;
+  TH1D *energy_n_ch03;
+  TH1D *energy_n_ch14;
+  TH1D *energy_n_ch17;
+  
 };
 
 
   
 } /* namespace comptonsoft */
 
-#endif /* OISTAPP_OISTMakeDetectorHits_Muon_H */
+#endif /* OISTAPP_OISTMakeDetectorHits_OISTCdTe_H */

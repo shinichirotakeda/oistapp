@@ -4,11 +4,13 @@
 #include "OISTPrimaryGen2DPhantom.hh"
 #include "OISTPrimaryGenUltraMicroPhantom.hh"
 #include "OISTDetectorImage.hh"
+#include "OISTDetectorImage_OISTCdTe.hh"
 #include "OISTReadDataFile_NT.hh"
 #include "OISTReadDataFile_Muon.hh"
 #include "OISTReadDataFile_Muon2.hh"
 #include "OIST1DHistogram.hh"
 #include "OISTMakeDetectorHits.hh"
+#include "OISTMakeDetectorHits_OISTCdTe.hh"
 #include "OISTMakeDetectorHits_Muon.hh"
 #include "OISTHitTreeIO.hh"
 #include "OISTHitTreeIOWithInitialInfo.hh"
@@ -50,6 +52,13 @@ namespace oistapp {
     OISTDetectorImage();  
   };
 
+  class OISTDetectorImage_OISTCdTe : public comptonsoft::VCSModule
+  {
+
+  public:
+    OISTDetectorImage_OISTCdTe();  
+  };
+  
   class OISTReadDataFile_NT : public comptonsoft::ReadDataFile
   {
 
@@ -85,6 +94,13 @@ namespace oistapp {
     OISTMakeDetectorHits ();  
   };
 
+  class OISTMakeDetectorHits_OISTCdTe : public comptonsoft::SelectHits
+  {
+
+  public:
+    OISTMakeDetectorHits_OISTCdTe ();  
+  };
+  
   class OISTMakeDetectorHits_Muon : public comptonsoft::SelectHits
   {
 

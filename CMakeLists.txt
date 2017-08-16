@@ -90,12 +90,14 @@ add_library(${TARGET_LIBRARY} SHARED
   PrimaryGen/src/OISTPrimaryGen2DPhantom.cc
   PrimaryGen/src/OISTPrimaryGenUltraMicroPhantom.cc
   Module/src/OISTDetectorImage.cc
+  Module/src/OISTDetectorImage_OISTCdTe.cc
   Module/src/OISTReadDataFile_NT.cc
   Module/src/OISTReadDataFile_Muon.cc
   Module/src/OISTReadDataFile_Muon2.cc		
   Module/src/OISTReadDataFile_COMP.cc
   Module/src/OIST1DHistogram.cc
   Module/src/OISTMakeDetectorHits
+  Module/src/OISTMakeDetectorHits_OISTCdTe
   Module/src/OISTMakeDetectorHits_Muon
   Module/src/OISTHitTreeIO.cc
   Module/src/OISTHitTreeIOWithInitialInfo.cc
