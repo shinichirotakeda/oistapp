@@ -28,16 +28,6 @@ bool is_group_adjacent(const HitList& group0, const HitList& group1) {
 
 namespace oistapp
 {
-
-  ANLStatus OISTMakeDetectorHits_OISTCdTe::mod_startup()
-  {    
-    comptonsoft::SelectHits::mod_startup();
-    //    std::cout << "ok ok " << std::endl;
-    analysismode = 0;
-    add_value_element(&analysismode, "analysismode");
-    return AS_OK;
-  }
-
   
   void OISTMakeDetectorHits_OISTCdTe::doProcessing()
   {
@@ -181,51 +171,8 @@ namespace oistapp
 	}
       }
 
-      if(anodeSideHits_.size()==1 && cathodeSideHits_.size()==1){
-	int xpix = cathodeSideHits_[0]->Pixel().X();
-	int ypix = anodeSideHits_[0]->Pixel().Y();
-	//	if(xpix!=24 && xpix!=29 && xpix!=32){
-	//	  if(xpix!=1 && xpix!=23 && xpix!=25 && xpix!=28 && xpix!=30 && xpix!=31 && xpix!=33 && xpix!=126){
-	//	    if(ypix!=3 && ypix!=14 && ypix!=17){
-	//	      if(ypix!=1 && ypix!=2 && ypix!=4 && ypix!=13 && ypix!=15 && ypix!=16 && ypix!=18 && ypix!=126){
-
-	if(40<=xpix && xpix<=120){
-	  if(40<=ypix && ypix<=120){
-	    double e_anode = anodeSideHits_[0]->EPI()/keV;
-	    double e_cathode = cathodeSideHits_[0]->EPI()/keV;	    
-	    m_Energy_Scattermap[detid]->Fill(e_anode,e_cathode);
-	    m_Energy_Scattermap2[detid]->Fill(0.5*(e_anode+e_cathode),0.5*(e_anode-e_cathode));
-	   
-
-	    if(-1.5<0.5*(e_anode-e_cathode) && 0.5*(e_anode-e_cathode)<1.5){
-	      m_Energy[detid]->Fill(0.5*(e_anode+e_cathode));
-	      m_Energy2[detid]->Fill(0.5*(e_anode+e_cathode));
-	    }else{
-	      if(1.5<=0.5*(e_anode-e_cathode)){
-		double ee = (0.5*(e_anode-e_cathode) + 0.65* 0.5*(e_anode+e_cathode) -1.0)/0.65;
-		m_Energy2[detid]->Fill(ee);
-	      }else{
-		double ee = (0.65* 0.5*(e_anode+e_cathode) - 0.5*(e_anode-e_cathode)-1.0)/0.65;
-		m_Energy2[detid]->Fill(ee);
-	      }
-	      
-	    }
-	      
-	    
-	    
-	  }
-	}
-	//    }
-	//	  }
-	//	}
-      }
-
-      if(analysismode==1){
-	reconstructDoubleSides1(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
-      }else{
-	reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
-      }
-
+      reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
+      
       for(int j=0;j<(int)reconstructedHits_.size();j++){
 	detector->insertReconstructedHit(reconstructedHits_[j]);
       }
@@ -259,31 +206,6 @@ namespace oistapp
     
   }
 
-
-  void OISTMakeDetectorHits_OISTCdTe::reconstructDoubleSides1(RealDetectorUnit2DStrip* dsd,
-						    const DetectorHitVector& hitsCathode,
-						    const DetectorHitVector& hitsAnode,
-						    DetectorHitVector& hitReconstructed)
-  {
-    if (hitsCathode.size()==1 && hitsAnode.size()==1) {
-      DetectorHit_sptr hitCathode = hitsCathode[0];
-      DetectorHit_sptr hitAnode = hitsAnode[0];
-      DetectorHit_sptr merged = mergeDoubleSides1(dsd,hitCathode, hitAnode);
-      
-      if (dsd->isEnergyConsistencyRequired()) {
-	if (!dsd->checkEnergyConsistency(merged->EPI(), hitCathode->EPI())) {
-	  return;
-	}
-	if (!dsd->checkEnergyConsistency(merged->EPI(), hitAnode->EPI())) {
-	  return;
-	}
-      }
-      
-      merged->setEnergy(merged->EPI());
-      hitReconstructed.push_back(merged);
-    }
-    
-  }  
   
   DetectorHit_sptr OISTMakeDetectorHits_OISTCdTe::mergeDoubleSides(comptonsoft::RealDetectorUnit2DStrip* dsd,
 							  const DetectorHit_sptr hitCathode,
@@ -300,43 +222,6 @@ namespace oistapp
     hit->setPosition(position);
     hit->setLocalPosition(localPosition);
     hit->setPixel(pixel);
-    return hit;
-  }
-
-  DetectorHit_sptr OISTMakeDetectorHits_OISTCdTe::mergeDoubleSides1(comptonsoft::RealDetectorUnit2DStrip* dsd,
-							  const DetectorHit_sptr hitCathode,
-							  const DetectorHit_sptr hitAnode) const
-  {
-    PixelID spCathode = hitCathode->Pixel();
-    PixelID spAnode = hitAnode->Pixel();
-    PixelID pixel = spCathode.combine(spAnode);
-    vector3_t position = dsd->Position(pixel);
-    vector3_t localPosition = dsd->LocalPosition(pixel);
-
-    double e_anode = hitAnode->EPI()/keV;
-    double e_cathode = hitCathode->EPI()/keV;
-
-    DetectorHit_sptr hit(new DetectorHit((dsd->PrioritySide()==ElectrodeSide::Anode) ?
-					 (*hitAnode) : 
-					 (*hitCathode)));
-    hit->setPosition(position);
-    hit->setLocalPosition(localPosition);
-    hit->setPixel(pixel);
-    
-    if(-1.5<0.5*(e_anode-e_cathode) && 0.5*(e_anode-e_cathode)<1.5){
-      double ee = 0.5*(e_anode+e_cathode) * keV;
-      hit->setEPI(ee);
-    }else{
-      if(1.5<=0.5*(e_anode-e_cathode)){
-	double ee = (0.5*(e_anode-e_cathode) + 0.65* 0.5*(e_anode+e_cathode) -1.0)/0.65 * keV;
-	hit->setEPI(ee);
-      }else{
-	double ee = (0.65* 0.5*(e_anode+e_cathode) - 0.5*(e_anode-e_cathode)-1.0)/0.65 * keV;
-	hit->setEPI(ee);
-      }
-      
-    }
-    
     return hit;
   }
   
@@ -387,36 +272,6 @@ namespace oistapp
       hist_clustered->GetXaxis()->SetTitle("Multiplicity(Anode)");
       hist_clustered->GetYaxis()->SetTitle("Multiplicity(Cathode)");
       m_Multiplicity_clustered[detid] = hist_clustered;
-
-      TH2F *hist_emap = 0;
-      name = (boost::format("energy_scattermap_%04d") % detid).str();
-      hist_emap = new TH2F(name.c_str(), "energy_scattermap", 2500, -0.5, 499.5, 2500, -0.5, 499.5);
-      hist_emap->GetXaxis()->SetTitle("Energy(Anode)");
-      hist_emap->GetYaxis()->SetTitle("Energy(Cathode)");      
-      m_Energy_Scattermap[detid]=hist_emap;
-
-      TH2F *hist_emap2 = 0;
-      name = (boost::format("energy_scattermap2_%04d") % detid).str();
-      hist_emap2 = new TH2F(name.c_str(), "energy_scattermap2", 4000, -0.5, 399.5, 2000, -100.5, 99.5);
-      hist_emap2->GetXaxis()->SetTitle("1/2 *(Energy(Anode)+Energy(Cathode)");
-      hist_emap2->GetYaxis()->SetTitle("1/2 *(Energy(Anode)-Energy(Cathode)");      
-      m_Energy_Scattermap2[detid]=hist_emap2;
-      
-
-      TH1D *hist_spec = 0;
-      name = (boost::format("spectrum_%04d") % detid).str();
-      hist_spec = new TH1D(name.c_str(), "spectrum(1.5<y<1.5)", 4000, -0.5, 399.5);
-      hist_spec->GetXaxis()->SetTitle("Energy");
-      hist_spec->GetYaxis()->SetTitle("Counts");      
-      m_Energy[detid]=hist_spec;
-
-      TH1D *hist_spec2 = 0;
-      name = (boost::format("spectrum2_%04d") % detid).str();
-      hist_spec2 = new TH1D(name.c_str(), "spectrum(all)", 4000, -0.5, 399.5);
-      hist_spec2->GetXaxis()->SetTitle("Energy");
-      hist_spec2->GetYaxis()->SetTitle("Counts");      
-      m_Energy2[detid]=hist_spec2;
-      
       
     }
 

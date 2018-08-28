@@ -28,16 +28,6 @@ bool is_group_adjacent(const HitList& group0, const HitList& group1) {
 
 namespace oistapp
 {
-
-  ANLStatus OISTMakeDetectorHits_OISTCdTe::mod_startup()
-  {    
-    comptonsoft::SelectHits::mod_startup();
-    //    std::cout << "ok ok " << std::endl;
-    analysismode = 0;
-    add_value_element(&analysismode, "analysismode");
-    return AS_OK;
-  }
-
   
   void OISTMakeDetectorHits_OISTCdTe::doProcessing()
   {
@@ -220,12 +210,8 @@ namespace oistapp
 	//	}
       }
 
-      if(analysismode==1){
-	reconstructDoubleSides1(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
-      }else{
-	reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
-      }
-
+      reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
+      
       for(int j=0;j<(int)reconstructedHits_.size();j++){
 	detector->insertReconstructedHit(reconstructedHits_[j]);
       }
@@ -259,31 +245,6 @@ namespace oistapp
     
   }
 
-
-  void OISTMakeDetectorHits_OISTCdTe::reconstructDoubleSides1(RealDetectorUnit2DStrip* dsd,
-						    const DetectorHitVector& hitsCathode,
-						    const DetectorHitVector& hitsAnode,
-						    DetectorHitVector& hitReconstructed)
-  {
-    if (hitsCathode.size()==1 && hitsAnode.size()==1) {
-      DetectorHit_sptr hitCathode = hitsCathode[0];
-      DetectorHit_sptr hitAnode = hitsAnode[0];
-      DetectorHit_sptr merged = mergeDoubleSides1(dsd,hitCathode, hitAnode);
-      
-      if (dsd->isEnergyConsistencyRequired()) {
-	if (!dsd->checkEnergyConsistency(merged->EPI(), hitCathode->EPI())) {
-	  return;
-	}
-	if (!dsd->checkEnergyConsistency(merged->EPI(), hitAnode->EPI())) {
-	  return;
-	}
-      }
-      
-      merged->setEnergy(merged->EPI());
-      hitReconstructed.push_back(merged);
-    }
-    
-  }  
   
   DetectorHit_sptr OISTMakeDetectorHits_OISTCdTe::mergeDoubleSides(comptonsoft::RealDetectorUnit2DStrip* dsd,
 							  const DetectorHit_sptr hitCathode,
@@ -300,43 +261,6 @@ namespace oistapp
     hit->setPosition(position);
     hit->setLocalPosition(localPosition);
     hit->setPixel(pixel);
-    return hit;
-  }
-
-  DetectorHit_sptr OISTMakeDetectorHits_OISTCdTe::mergeDoubleSides1(comptonsoft::RealDetectorUnit2DStrip* dsd,
-							  const DetectorHit_sptr hitCathode,
-							  const DetectorHit_sptr hitAnode) const
-  {
-    PixelID spCathode = hitCathode->Pixel();
-    PixelID spAnode = hitAnode->Pixel();
-    PixelID pixel = spCathode.combine(spAnode);
-    vector3_t position = dsd->Position(pixel);
-    vector3_t localPosition = dsd->LocalPosition(pixel);
-
-    double e_anode = hitAnode->EPI()/keV;
-    double e_cathode = hitCathode->EPI()/keV;
-
-    DetectorHit_sptr hit(new DetectorHit((dsd->PrioritySide()==ElectrodeSide::Anode) ?
-					 (*hitAnode) : 
-					 (*hitCathode)));
-    hit->setPosition(position);
-    hit->setLocalPosition(localPosition);
-    hit->setPixel(pixel);
-    
-    if(-1.5<0.5*(e_anode-e_cathode) && 0.5*(e_anode-e_cathode)<1.5){
-      double ee = 0.5*(e_anode+e_cathode) * keV;
-      hit->setEPI(ee);
-    }else{
-      if(1.5<=0.5*(e_anode-e_cathode)){
-	double ee = (0.5*(e_anode-e_cathode) + 0.65* 0.5*(e_anode+e_cathode) -1.0)/0.65 * keV;
-	hit->setEPI(ee);
-      }else{
-	double ee = (0.65* 0.5*(e_anode+e_cathode) - 0.5*(e_anode-e_cathode)-1.0)/0.65 * keV;
-	hit->setEPI(ee);
-      }
-      
-    }
-    
     return hit;
   }
   

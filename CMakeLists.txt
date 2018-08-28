@@ -23,7 +23,7 @@ option(USE_RUBY "enable Ruby binding" ON)
 ### ROOT ###
 if(USE_ROOT)
   set(ROOTSYS $ENV{ROOTSYS})
-  set(ROOTDIR "")
+  set(ROOTDIR "/root")
   set(ROOT_INC_DIR ${ROOTSYS}/include${ROOTDIR})
   set(ROOT_LIB_DIR ${ROOTSYS}/lib${ROOTDIR})
   set(ROOT_LIB
