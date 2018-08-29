@@ -2,7 +2,7 @@
 #include <iostream>
 #include <boost/format.hpp>
 #include "FlagDefinition.hh"
-
+#include "AstroUnits.hh"
 
 using namespace anl;
 using namespace comptonsoft;
@@ -86,10 +86,19 @@ namespace oistapp
 	pixelPitchX_ = detector->getPixelPitchX();
 	pixelPitchY_ = detector->getPixelPitchY();
       */
+
+      if(anodeSideHits_.size()==1 && cathodeSideHits_.size()==1){
+	double e_anode = anodeSideHits_[0]->EPI()/keV;
+	double e_cathode = cathodeSideHits_[0]->EPI()/keV;	    
+	m_Energy_Scattermap[detid]->Fill(e_anode,e_cathode);
+	m_Energy_Scattermap2[detid]->Fill(0.5*(e_anode+e_cathode),0.5*(e_anode-e_cathode));
+      }
+            
       reconstructDoubleSides(dsd,cathodeSideHits_, anodeSideHits_, reconstructedHits_);
 
       for(int j=0;j<(int)reconstructedHits_.size();j++){
 	detector->insertReconstructedHit(reconstructedHits_[j]);
+	m_Energy[detid]->Fill(reconstructedHits_[j]->Energy()/keV);
       }
       //      detector->reconstructHits();
     }
@@ -187,6 +196,35 @@ namespace oistapp
       hist_clustered->GetXaxis()->SetTitle("Multiplicity(Anode)");
       hist_clustered->GetYaxis()->SetTitle("Multiplicity(Cathode)");
       m_Multiplicity_clustered[detid] = hist_clustered;
+
+      TH2F *hist_emap = 0;
+      name = (boost::format("energy_scattermap_%04d") % detid).str();
+      hist_emap = new TH2F(name.c_str(), "energy_scattermap", 2500, -0.5, 499.5, 2500, -0.5, 499.5);
+      hist_emap->GetXaxis()->SetTitle("Energy(Anode)");
+      hist_emap->GetYaxis()->SetTitle("Energy(Cathode)");      
+      m_Energy_Scattermap[detid]=hist_emap;
+
+      TH2F *hist_emap2 = 0;
+      name = (boost::format("energy_scattermap2_%04d") % detid).str();
+      hist_emap2 = new TH2F(name.c_str(), "energy_scattermap2", 4000, -0.5, 399.5, 2000, -100.5, 99.5);
+      hist_emap2->GetXaxis()->SetTitle("1/2 *(Energy(Anode)+Energy(Cathode)");
+      hist_emap2->GetYaxis()->SetTitle("1/2 *(Energy(Anode)-Energy(Cathode)");      
+      m_Energy_Scattermap2[detid]=hist_emap2;
+      
+      TH1D *hist_spec = 0;
+      name = (boost::format("spectrum_%04d") % detid).str();
+      hist_spec = new TH1D(name.c_str(), "spectrum(energy priority side)", 4000, -0.5, 399.5);
+      hist_spec->GetXaxis()->SetTitle("Energy");
+      hist_spec->GetYaxis()->SetTitle("Counts");      
+      m_Energy[detid]=hist_spec;
+
+      TH1D *hist_spec2 = 0;
+      name = (boost::format("spectrum2_%04d") % detid).str();
+      hist_spec2 = new TH1D(name.c_str(), "spectrum(reconstructed)", 4000, -0.5, 399.5);
+      hist_spec2->GetXaxis()->SetTitle("Energy");
+      hist_spec2->GetYaxis()->SetTitle("Counts");      
+      m_Energy2[detid]=hist_spec2;
+      
       
     }
     return AS_OK;

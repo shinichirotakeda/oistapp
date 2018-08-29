@@ -62,6 +62,11 @@ private:
   
   std::map<int, TH2*> m_Multiplicity_org;
   std::map<int, TH2*> m_Multiplicity_clustered;
+  std::map<int, TH2*> m_Energy_Scattermap;
+  std::map<int, TH2*> m_Energy_Scattermap2;
+  std::map<int, TH1*> m_Energy;
+  std::map<int, TH1*> m_Energy2;
+
 };
 
 
