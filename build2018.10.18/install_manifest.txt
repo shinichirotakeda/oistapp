@@ -1,0 +1,2 @@
+/Users/takeda/lib/libOISTapp.dylib
+/Users/takeda/lib/ruby/oISTapp.bundle

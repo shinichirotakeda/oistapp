@@ -88,6 +88,7 @@ link_directories(
 
 add_library(${TARGET_LIBRARY} SHARED
   PrimaryGen/src/OISTPrimaryGen2DPhantom.cc
+  PrimaryGen/src/OISTPrimaryGen3DPhantom.cc
   PrimaryGen/src/OISTPrimaryGenUltraMicroPhantom.cc
   Module/src/OISTDetectorImage.cc
   Module/src/OISTDetectorImage_OISTCdTe.cc

@@ -1,5 +1,6 @@
 namespace oistapp {
   class OISTPrimaryGen2DPhantom;
+  class OISTPrimaryGen3DPhantom;
   class OISTPrimaryGenUltraMicroPhantom;
   class OISTDetectorImage;
   class OISTDetectorImage_OISTCdTe;

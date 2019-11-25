@@ -2,6 +2,7 @@
 %{
 
 #include "OISTPrimaryGen2DPhantom.hh"
+#include "OISTPrimaryGen3DPhantom.hh"
 #include "OISTPrimaryGenUltraMicroPhantom.hh"
 #include "OISTDetectorImage.hh"
 #include "OISTDetectorImage_OISTCdTe.hh"
@@ -39,6 +40,12 @@ namespace oistapp {
     OISTPrimaryGen2DPhantom();
   };
 
+  class OISTPrimaryGen3DPhantom : public anlgeant4::BasicPrimaryGen
+  {
+  public:
+    OISTPrimaryGen3DPhantom();
+  };
+  
   class OISTPrimaryGenUltraMicroPhantom : public anlgeant4::BasicPrimaryGen
   {
   public:
